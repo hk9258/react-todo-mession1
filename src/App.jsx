@@ -4,6 +4,10 @@ function App() {
   const [input, setInput] = useState("");
   const [todos, setTodos] = useState([]);
 
+  const deleteTodo = (id) => {
+    setTodos(todos.filter((todo) => todo.id !== id));
+  };
+
   const handleAddTodo = () => {
     if (input.trim() === "") return;
 
@@ -15,6 +19,14 @@ function App() {
 
     setTodos([...todos, newTodo]);
     setInput("");
+  };
+
+  const toggleTodo = (id) => {
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo,
+      ),
+    );
   };
 
   return (
@@ -32,7 +44,24 @@ function App() {
 
       <ul>
         {todos.map((todo) => (
-          <li key={todo.id}>{todo.value}</li>
+          <li key={todo.id}>
+            <input
+              type="checkbox"
+              checked={todo.completed}
+              onChange={() => toggleTodo(todo.id)}
+            />
+
+            <span
+              style={{
+                textDecoration: todo.completed ? "line-through" : "none",
+                marginRight: "8px",
+              }}
+            >
+              {todo.value}
+            </span>
+
+            <button onClick={() => deleteTodo(todo.id)}>삭제</button>
+          </li>
         ))}
       </ul>
     </div>
