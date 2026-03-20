@@ -4,13 +4,13 @@ import { getStorage, setStorage } from "../utils/storage";
 export const useTodos = () => {
   const [todos, setTodos] = useState([]);
 
-  // 처음
+  // 초기 로드
   useEffect(() => {
     const storedTodos = getStorage("todos");
     setTodos(storedTodos);
   }, []);
 
-  // 변경될 때마다 저장
+  // 저장
   useEffect(() => {
     setStorage("todos", todos);
   }, [todos]);
