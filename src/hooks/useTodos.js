@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { getStorage, setStorage } from "../utils/storage";
 
 export const useTodos = () => {
   const [todos, setTodos] = useState([]);
+  const isMounted = useRef(false);
 
-  // 초기 로드
+  // 최초 로드
   useEffect(() => {
     const storedTodos = getStorage("todos");
     setTodos(storedTodos);
@@ -12,25 +13,33 @@ export const useTodos = () => {
 
   // 저장
   useEffect(() => {
+    if (!isMounted.current) {
+      isMounted.current = true;
+      return;
+    }
+
     setStorage("todos", todos);
   }, [todos]);
 
   const addTodo = (value) => {
+    if (!value.trim()) return;
+
     const newTodo = {
-      id: Date.now(),
+      id: crypto.randomUUID(),
       value,
       completed: false,
     };
-    setTodos([...todos, newTodo]);
+
+    setTodos((prev) => [...prev, newTodo]);
   };
 
   const deleteTodo = (id) => {
-    setTodos(todos.filter((todo) => todo.id !== id));
+    setTodos((prev) => prev.filter((todo) => todo.id !== id));
   };
 
   const toggleTodo = (id) => {
-    setTodos(
-      todos.map((todo) =>
+    setTodos((prev) =>
+      prev.map((todo) =>
         todo.id === id ? { ...todo, completed: !todo.completed } : todo,
       ),
     );
